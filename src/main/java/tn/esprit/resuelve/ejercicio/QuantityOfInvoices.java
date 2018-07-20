@@ -49,6 +49,9 @@ public class QuantityOfInvoices {
             } catch (InvoicesException ex) {
                 System.out.println(ex.getMessage());
             }
+            catch(IllegalFieldValueException e){
+                System.out.println(e.getLocalizedMessage());
+            }
         } else {
             throw new InvoicesException("Te Faltan argumentos");
         }
