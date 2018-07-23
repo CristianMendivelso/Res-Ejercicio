@@ -14,6 +14,12 @@ Una vez descargado se debe acceder a la carpeta que contiene el proyecto
 ```sh
 $ cd Res-Ejercicio/
 ```
+Se debe cambiar a la rama actual
+
+```sh
+$ git checkout tipo2Respuesta
+```
+
 Allí se debe compilar el proyecto con el comando:
 ```sh
 $ mvn compile
