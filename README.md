@@ -29,6 +29,6 @@ $  mvn exec:java -Dexec.mainClass=tn.esprit.resuelve.ejercicio.QuantityOfInvoice
 ```
 Por ejemplo podría ejecutar la siguiente consulta
 ```sh
-$  mvn exec:java -Dexec.mainClass=tn.esprit.resuelve.ejercicio.QuantityOfInvoices -Dexec.args="'http://34.209.24.195/facturas' '4e25ce61-e6e2-457a-89f7-116404990967' '2017-01-01' '2017-03-30'"
+$  mvn exec:java -Dexec.mainClass=tn.esprit.resuelve.ejercicio.QuantityOfInvoices -Dexec.args="'http://34.209.24.195/facturas' '4e25ce61-e6e2-457a-89f7-116404990967' '2017-01-01' '2017-12-31'"
 
 ```
