@@ -11,8 +11,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.IllegalFieldValueException;
@@ -44,8 +42,16 @@ public class QuantityOfInvoices {
             try {
                 DateTime startDate = dtf.parseDateTime(args[2]);
                 DateTime finishDate = dtf.parseDateTime(args[3]);
-                System.out.println("La Cantidad de Facturas Entre las fechas " + args[2] + " y " + args[3] + " es: " + getInvoicesbyDates(url, id, startDate, finishDate));
-                System.out.println("Número de llamadas al servicio: " + numCalls);
+                long numInvoices= getInvoicesbyDates(url, id, startDate, finishDate);
+                if (numInvoices>100){
+                    System.out.println("Hay más de 100 resultados");
+                    
+                }
+                else{
+                    System.out.println("La Cantidad de Facturas Entre las fechas " + args[2] + " y " + args[3] + " es: " +numInvoices );
+                    System.out.println("Número de llamadas al servicio: " + numCalls);
+                }
+                
             } catch (InvoicesException ex) {
                 System.out.println(ex.getMessage());
             }
@@ -53,7 +59,7 @@ public class QuantityOfInvoices {
                 System.out.println(e.getLocalizedMessage());
             }
         } else {
-            throw new InvoicesException("Te Faltan argumentos");
+            throw new InvoicesException("Te faltan parámetros");
         }
     }
 
@@ -73,12 +79,15 @@ public class QuantityOfInvoices {
     public static long getInvoicesbyDates(String url, String id, DateTime start, DateTime finish) throws InvoicesException {
         long answer = 0;
         String output = getInvoicesFromWeb(url, id, start, finish);
+        String startString = dtf.print(start);
+        String finishString = dtf.print(finish);
         try{
             answer = Long.parseLong(output);
         }
         //Si Hay más de 100 resultados recurrir sobre diferencias de fechas más pequeñas (diferencia/2) e ir sumando
         catch(NumberFormatException e ){
             Days diffInDays = Days.daysBetween(start, finish);
+            
             int days = diffInDays.getDays();
             answer = getInvoicesbyDates(url, id, start, start.plusDays(days / 2)) + getInvoicesbyDates(url, id, start.plusDays((days / 2) + 1), finish);
         }
@@ -96,9 +105,10 @@ public class QuantityOfInvoices {
      * @param finish fecha final de consulta
      * @return Una cadena que representa la respuesta del servicio sobre la
      * consulta
+     * @throws tn.esprit.resuelve.ejercicio.InvoicesException
      *
      */
-    public static String getInvoicesFromWeb(String url, String id, DateTime start, DateTime finish) {
+    public static String getInvoicesFromWeb(String url, String id, DateTime start, DateTime finish) throws InvoicesException {
         numCalls += 1;
         String output = "";
         String startString = dtf.print(start);
@@ -112,9 +122,9 @@ public class QuantityOfInvoices {
             output = in.readLine();
             in.close();
         } catch (MalformedURLException ex) {
-            Logger.getLogger(QuantityOfInvoices.class.getName()).log(Level.SEVERE, null, ex);
+            throw new InvoicesException("URL Inválida, Revise los parámetros");
         } catch (IOException ex) {
-            Logger.getLogger(QuantityOfInvoices.class.getName()).log(Level.SEVERE, null, ex);
+            throw new InvoicesException(ex.getMessage());
         }
         return output;
     }
