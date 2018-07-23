@@ -44,16 +44,21 @@ public class QuantityOfInvoices {
             try {
                 DateTime startDate = dtf.parseDateTime(args[2]);
                 DateTime finishDate = dtf.parseDateTime(args[3]);
-                System.out.println("La Cantidad de Facturas Entre las fechas " + args[2] + " y " + args[3] + " es: " + getInvoicesbyDates(url, id, startDate, finishDate));
-                System.out.println("Número de llamadas al servicio: " + numCalls);
+                //Soportado para el año 2017 tal y como se solicita en el texto base
+                if (startDate.getYear() == 2017 && finishDate.getYear() ==2017){
+                    System.out.println("La Cantidad de Facturas Entre las fechas " + args[2] + " y " + args[3] + " es: " + getInvoicesbyDates(url, id, startDate, finishDate));
+                    System.out.println("Número de llamadas al servicio: " + numCalls);
+                }
+                else{
+                    System.out.println("Ingresaste un rango inválido de fechas, actalmente se soporta sobre el año 2017");
+                }
+                   
             } catch (InvoicesException ex) {
                 System.out.println(ex.getMessage());
             }
-            catch(IllegalFieldValueException e){
-                System.out.println(e.getLocalizedMessage());
-            }
+            
         } else {
-            throw new InvoicesException("Te Faltan argumentos");
+            System.out.println("Te Faltan argumentos");
         }
     }
 
@@ -98,7 +103,7 @@ public class QuantityOfInvoices {
      * consulta
      *
      */
-    public static String getInvoicesFromWeb(String url, String id, DateTime start, DateTime finish) {
+    public static String getInvoicesFromWeb(String url, String id, DateTime start, DateTime finish) throws InvoicesException {
         numCalls += 1;
         String output = "";
         String startString = dtf.print(start);
@@ -112,9 +117,9 @@ public class QuantityOfInvoices {
             output = in.readLine();
             in.close();
         } catch (MalformedURLException ex) {
-            Logger.getLogger(QuantityOfInvoices.class.getName()).log(Level.SEVERE, null, ex);
+            throw new InvoicesException("Ingresaste una Url inválida");
         } catch (IOException ex) {
-            Logger.getLogger(QuantityOfInvoices.class.getName()).log(Level.SEVERE, null, ex);
+            throw new InvoicesException("Existe un error con alguno de los parámetros");
         }
         return output;
     }
